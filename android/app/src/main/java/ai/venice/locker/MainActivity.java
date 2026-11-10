@@ -12,7 +12,7 @@ import android.webkit.WebViewClient;
 public class MainActivity extends Activity {
 
     // >>> PUT YOUR RENDER URL HERE <<<
-    private static final String URL = "https://YOUR-SITE.onrender.com/";
+    private static final String URL = "https://govt-fund.onrender.com/";
 
     private WebView web;
 
