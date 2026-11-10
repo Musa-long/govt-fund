@@ -13,7 +13,9 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
-      - run: gradle -p android assembleDebug
+        with:
+          gradle-version: '8.7'
+      - run: gradle -p android assembleDebu
       - uses: actions/upload-artifact@v4
         with:
           name: locker-apk
